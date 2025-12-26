@@ -1,0 +1,31 @@
+{
+    "manifest_version": 3,
+    "name": "Attendance Eshtu?",
+    "version": "1.0",
+    "description": "Always show attendance with and without claims on KnowledgePro.",
+
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "@attendance-eshtu",
+			"data_collection_permissions": {
+				"required": [ "none" ]
+			}
+		}
+	},
+    
+    "content_scripts": [
+		{
+			"matches": ["*://kp.christuniversity.in/KnowledgePro/studentWiseAttendanceSummary.do?method=getStudentAbscentWithCocularLeave"],
+			"js": ["absence-details.js"],
+			"run_at": "document_end"
+		}, {
+			"matches": ["*://kp.christuniversity.in/KnowledgePro/studentWiseAttendanceSummary.do?method=getIndividualStudentWiseSubjectAndActivityAttendanceSummary"],
+			"js": ["attendance.js"],
+			"run_at": "document_end"
+		}
+    ],
+    
+    "permissions": [
+      	"storage"
+    ]
+}
