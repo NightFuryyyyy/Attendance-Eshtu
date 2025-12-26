@@ -6,16 +6,17 @@ async function saveAbsence() {
         return;
     }
     const absenceBeforeClaims = parseFloat(elements[0].textContent);
-    const absenceAfterClaims = parseFloat(elements[2].textContent);
-    if (!absenceBeforeClaims || !absenceAfterClaims) {
+    const claims = parseFloat(elements[1].textContent);
+    if (!absenceBeforeClaims || !claims) {
         return;
     }
+    const absenceAfterClaims = absenceBeforeClaims - claims;
     try {
         await browserAPI.storage.local.set({
             absenceBeforeClaims,
             absenceAfterClaims
         });
-        for (i = 1; i < 3; i++) {
+        for (i = 0; i < 2; i++) {
             elements[i].style.background = "green";
             elements[i].style.color = "white";
         }
