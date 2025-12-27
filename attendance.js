@@ -32,6 +32,12 @@ async function doStuff() {
         attendanceDisplayed.style.whiteSpace = "pre";
         document.querySelector("table tr:nth-child(3)").after(attendanceDisplayed);
     }
+
+    const absencePageLink = document.createElement("a");
+    absencePageLink.appendChild(document.createTextNode("here"));
+    absencePageLink.href = "https://kp.christuniversity.in/KnowledgePro/studentWiseAttendanceSummary.do?method=getStudentAbscentWithCocularLeave";
+    absencePageLink.style.textDecoration = "underline";
+    
     try {
         const fetchedValues = await browserAPI.storage.local.get(["absenceBeforeClaims", "absenceAfterClaims", "lastUpdated"]);
         const absenceBeforeClaims = fetchedValues.absenceBeforeClaims;
@@ -56,10 +62,6 @@ async function doStuff() {
         attendanceDisplayed.textContent = "";
         attendanceDisplayed.insertCell();
         const attendanceDisplayTd = attendanceDisplayed.insertCell();
-        const absencePageLink = document.createElement("a");
-        absencePageLink.appendChild(document.createTextNode("here"));
-        absencePageLink.href = "https://kp.christuniversity.in/KnowledgePro/studentWiseAttendanceSummary.do?method=getStudentAbscentWithCocularLeave";
-        absencePageLink.style.textDecoration = "underline";
 
         attendanceDisplayTd.appendChild(document.createTextNode(`Attendance before claims: ${attendanceBeforeClaims}%\n`));
         attendanceDisplayTd.appendChild(document.createTextNode(`Attendance after claims:  ${attendanceAfterClaims}%\n`));
@@ -79,7 +81,12 @@ async function doStuff() {
         attendanceDisplayed.textContent = "";
         attendanceDisplayed.insertCell();
         const attendanceDisplayTd = attendanceDisplayed.insertCell();
+
         attendanceDisplayTd.appendChild(document.createTextNode("Attendance Eshtu? failed to fetch values"));
+        attendanceDisplayTd.appendChild(document.createTextNode("Go "));
+        attendanceDisplayTd.appendChild(absencePageLink);
+        attendanceDisplayTd.appendChild(document.createTextNode(" to update absence values."));
+
         attendanceDisplayed.classList.add("fetch-fail");
         attendanceDisplayed.classList.remove("attendance");
     }
