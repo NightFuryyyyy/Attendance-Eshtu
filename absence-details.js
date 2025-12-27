@@ -11,10 +11,12 @@ async function saveAbsence() {
         return;
     }
     const absenceAfterClaims = absenceBeforeClaims - claims;
+    const lastUpdated = (new Date()).toISOString();
     try {
         await browserAPI.storage.local.set({
             absenceBeforeClaims,
-            absenceAfterClaims
+            absenceAfterClaims,
+            lastUpdated
         });
         for (i = 0; i < 2; i++) {
             elements[i].style.background = "green";
