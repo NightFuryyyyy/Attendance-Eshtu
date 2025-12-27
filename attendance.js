@@ -33,10 +33,17 @@ async function doStuff() {
         document.querySelector("table tr:nth-child(3)").after(attendanceDisplayed);
     }
     try {
-        const fetchedValues = await browserAPI.storage.local.get(["absenceBeforeClaims", "absenceAfterClaims"]);
-        const absenceBeforeClaims = fetchedValues["absenceBeforeClaims"];
-        const absenceAfterClaims = fetchedValues["absenceAfterClaims"];
-        if (!absenceBeforeClaims || !absenceAfterClaims) {
+        const fetchedValues = await browserAPI.storage.local.get(["absenceBeforeClaims", "absenceAfterClaims", "lastUpdated"]);
+        const absenceBeforeClaims = fetchedValues.absenceBeforeClaims;
+        const absenceAfterClaims = fetchedValues.absenceAfterClaims;
+        const lastUpdated = (new Date(fetchedValues.lastUpdated)).toLocaleDateString("en-IN", {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        if (!absenceBeforeClaims || !absenceAfterClaims || !lastUpdated) {
             throw new Error("Value missing");
         }
         var attendanceBeforeClaims = (conducted - absenceBeforeClaims) * 100 / conducted;
@@ -46,12 +53,21 @@ async function doStuff() {
         if (attendanceDisplayed.classList.contains("attendance")) {
             return;
         }
-        attendanceDisplayed.innerHTML = "";
+        attendanceDisplayed.textContent = "";
         attendanceDisplayed.insertCell();
         const attendanceDisplayTd = attendanceDisplayed.insertCell();
-        attendanceDisplayTd.appendChild(document.createTextNode(
-            `Attendance before claims: ${attendanceBeforeClaims}%\nAttendance after claims:  ${attendanceAfterClaims}%`
-        ));
+        const absencePageLink = document.createElement("a");
+        absencePageLink.appendChild(document.createTextNode("here"));
+        absencePageLink.href = "https://kp.christuniversity.in/KnowledgePro/studentWiseAttendanceSummary.do?method=getStudentAbscentWithCocularLeave";
+        absencePageLink.style.textDecoration = "underline";
+
+        attendanceDisplayTd.appendChild(document.createTextNode(`Attendance before claims: ${attendanceBeforeClaims}%\n`));
+        attendanceDisplayTd.appendChild(document.createTextNode(`Attendance after claims:  ${attendanceAfterClaims}%\n`));
+        attendanceDisplayTd.appendChild(document.createTextNode(`Last updated: ${lastUpdated}\n`));
+        attendanceDisplayTd.appendChild(document.createTextNode("Go "));
+        attendanceDisplayTd.appendChild(absencePageLink);
+        attendanceDisplayTd.appendChild(document.createTextNode(" to update absence values."));
+        
         attendanceDisplayed.classList.add("attendance");
         attendanceDisplayed.classList.remove("fetch-fail");
         observer.disconnect();
@@ -60,7 +76,7 @@ async function doStuff() {
         if (attendanceDisplayed.classList.contains("fetch-fail")) {
             return;
         }
-        attendanceDisplayed.innerHTML = "";
+        attendanceDisplayed.textContent = "";
         attendanceDisplayed.insertCell();
         const attendanceDisplayTd = attendanceDisplayed.insertCell();
         attendanceDisplayTd.appendChild(document.createTextNode("Attendance Eshtu? failed to fetch values"));
