@@ -37,7 +37,7 @@ async function doStuff() {
     absencePageLink.appendChild(document.createTextNode("here"));
     absencePageLink.href = "https://kp.christuniversity.in/KnowledgePro/studentWiseAttendanceSummary.do?method=getStudentAbscentWithCocularLeave";
     absencePageLink.style.textDecoration = "underline";
-    
+
     try {
         const fetchedValues = await browserAPI.storage.local.get(["absenceBeforeClaims", "absenceAfterClaims", "lastUpdated"]);
         const absenceBeforeClaims = fetchedValues.absenceBeforeClaims;
@@ -82,7 +82,7 @@ async function doStuff() {
         attendanceDisplayed.insertCell();
         const attendanceDisplayTd = attendanceDisplayed.insertCell();
 
-        attendanceDisplayTd.appendChild(document.createTextNode("Attendance Eshtu? failed to fetch values"));
+        attendanceDisplayTd.appendChild(document.createTextNode("Attendance Eshtu? failed to fetch values.\n"));
         attendanceDisplayTd.appendChild(document.createTextNode("Go "));
         attendanceDisplayTd.appendChild(absencePageLink);
         attendanceDisplayTd.appendChild(document.createTextNode(" to update absence values."));
