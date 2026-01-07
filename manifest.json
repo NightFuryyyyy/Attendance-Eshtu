@@ -22,6 +22,9 @@
 			"matches": ["*://kp.christuniversity.in/KnowledgePro/studentWiseAttendanceSummary.do?method=getIndividualStudentWiseSubjectAndActivityAttendanceSummary"],
 			"js": ["attendance.js"],
 			"run_at": "document_end"
+		}, {
+			"matches": ["*://kp.christuniversity.in/KnowledgePro/*"],
+			"css": ["fixes.css"]
 		}
     ],
     
