@@ -22,6 +22,7 @@ async function saveAbsence() {
             elements[i].style.background = "green";
             elements[i].style.color = "white";
         }
+        observer.disconnect();
     } catch (error) {
         console.error("Failed to save:", error);
     }
@@ -29,7 +30,6 @@ async function saveAbsence() {
 
 const observer = new MutationObserver((mutations) => {
     saveAbsence();
-    observer.disconnect();
 });
 
 saveAbsence();
