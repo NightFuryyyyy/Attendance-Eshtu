@@ -1,0 +1,17 @@
+@media screen and (max-width: 800px) {
+    ul.nav li.home {
+        background: #183883;
+        color: #ffffff;
+        padding: 0 13px;
+        font-family: "Source Sans Pro", sans-serif;
+        font-size: 16px;
+    }
+    ul.nav li.home:hover {
+        color: #e1c993;
+        padding: 0 13px;
+    }
+
+    ul.NormalMenu li:hover > ul li a:hover {
+        color: #e1c993;
+    }
+}
