@@ -1,104 +1,169 @@
 const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
 
-async function doStuff() {
-    const trs = document.querySelectorAll("body table.table.table-striped.table-bordered.table-condensed tr");
-    var element = null;
-    for(i = 0; i < trs.length; i++) {
-        const tr = trs[i];
-        const td = tr.querySelector("td");
-        if (!td) {
-            continue;
-        }
-        if (td.textContent.includes("Total")) {
-            element = tr.querySelector("tr>td:nth-child(2)>div");
-            break;
-        }
-    };
-    if (!element) {
-        return;
-    }
-    const conducted = parseFloat(element.textContent);
-    if (!conducted) {
-        return;
-    }
-    element.style.background = "green";
-    element.style.color = "white";
-    var attendanceDisplayed = document.getElementById("attendanceDisplayed");
-    if (!attendanceDisplayed) {
-        attendanceDisplayed = document.createElement("tr");
-        attendanceDisplayed.id = "attendanceDisplayed";
-        attendanceDisplayed.style.fontSize = "14px";
-        attendanceDisplayed.style.fontFamily = "monospace";
-        attendanceDisplayed.style.whiteSpace = "pre";
-        document.querySelector("table tr:nth-child(3)").after(attendanceDisplayed);
+class Main {
+    static observer = new MutationObserver((mutations) => {
+        this.doStuff();
+    });
+    static includesClaims = null;
+    
+    static table = null;
+    static existingTotalTr = null;
+    static existingTotalDescTd = null;
+    static totalConductedDiv = null;
+    static extraTr = null;
+    static AYTitle = document.createElement("span");
+    static absencePageA = document.createElement("a");
+    
+    static ABSENCE_PAGE_URL = "https://kp.christuniversity.in/KnowledgePro/studentWiseAttendanceSummary.do?method=getStudentAbscentWithCocularLeave";
+    
+    static existingTotal = null;
+    static totalConducted = null;
+    static fetchedValues = null;
+    static absenceBeforeClaims = null;
+    static absenceAfterClaims = null;
+    static lastUpdated = null;
+
+    static TITLE = "Attendance Eshtu?";
+
+    static extraTrState = null;
+    static ATTENDANCE_SHOWN = 0;
+    static FETCH_FAIL = 1;
+    static OUTDATED_VALUES = 2;
+
+    static MessageTR(message) {
+        const messageTr = document.createElement("tr");
+        const messageTd = messageTr.insertCell();
+
+        messageTd.appendChild(this.AYTitle);
+        messageTd.appendChild(document.createTextNode(` ${message} Go `));
+        messageTd.appendChild(this.absencePageA);
+        messageTd.appendChild(document.createTextNode(" to update absence values."));
+
+        messageTd.colSpan = "3";
+        messageTd.style.textAlign = "center";
+
+        return messageTr;
     }
 
-    const absencePageLink = document.createElement("a");
-    absencePageLink.appendChild(document.createTextNode("here"));
-    absencePageLink.href = "https://kp.christuniversity.in/KnowledgePro/studentWiseAttendanceSummary.do?method=getStudentAbscentWithCocularLeave";
-    absencePageLink.style.textDecoration = "underline";
+    static doStuff() {
+        if (!this.extraTr) {
+            this.table = document.querySelector("table table table");
+            this.totalConductedDiv = this.table.querySelector("tr:has(td[colspan='2'])>td:last-child td:nth-child(2) div");
+            this.existingTotalTr = this.table.querySelector("tr:has(td[colspan='2']):last-child");
+            this.existingTotalDescTd = this.existingTotalTr.querySelector("td");
+            this.extraTr = this.table.insertRow();
+            
+            this.totalConducted = parseFloat(this.totalConductedDiv.textContent);
+            this.existingTotal = parseFloat(this.existingTotalTr.querySelector("td:nth-child(2)").textContent);
+            this.includesClaims = this.existingTotalDescTd.textContent.includes("(With Co-curricular Leave)");
+            const newTotalDesc = `Attendance Percentage with${this.includesClaims ? "" : "out"} Claims`;
 
-    try {
-        const fetchedValues = await browserAPI.storage.local.get(["absenceBeforeClaims", "absenceAfterClaims", "lastUpdated"]);
-        const absenceBeforeClaims = fetchedValues.absenceBeforeClaims;
-        const absenceAfterClaims = fetchedValues.absenceAfterClaims;
-        const lastUpdated = (new Date(fetchedValues.lastUpdated)).toLocaleDateString("en-IN", {
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-        if (!absenceBeforeClaims || !absenceAfterClaims || !lastUpdated) {
-            throw new Error("Value missing");
+            this.existingTotalDescTd.textContent = "";
+            this.existingTotalDescTd.appendChild(document.createTextNode(newTotalDesc));
+            Object.assign(this.existingTotalDescTd.style, {
+                fontWeight: "700",
+                textAlign: "right"
+            });
         }
-        var attendanceBeforeClaims = (conducted - absenceBeforeClaims) * 100 / conducted;
+
+        if (!this.absenceBeforeClaims || !this.absenceAfterClaims || !this.lastUpdated) {
+            if (this.extraTrState == this.FETCH_FAIL) {
+                return;
+            }
+            
+            const extraTrToInject = this.MessageTR("Failed to fetch values.");
+
+            this.extraTr.replaceWith(extraTrToInject);
+            this.extraTr = extraTrToInject;
+
+            this.extraTrState = this.FETCH_FAIL;
+            return;
+        }
+
+        var attendanceBeforeClaims = (this.totalConducted - this.absenceBeforeClaims) * 100 / this.totalConducted;
         attendanceBeforeClaims = Math.round(attendanceBeforeClaims * 100) / 100;
-        var attendanceAfterClaims = (conducted - absenceAfterClaims) * 100 / conducted;
+        var attendanceAfterClaims = (this.totalConducted - this.absenceAfterClaims) * 100 / this.totalConducted;
         attendanceAfterClaims = Math.round(attendanceAfterClaims * 100) / 100;
-        if (attendanceDisplayed.classList.contains("attendance")) {
+
+        if ((this.includesClaims && this.existingTotal != attendanceAfterClaims) || (!this.includesClaims && this.existingTotal != attendanceBeforeClaims)) {
+            if (this.extraTrState == this.OUTDATED_VALUES) {
+                return;
+            }
+
+            const extraTrToInject = this.MessageTR("Values are outdated.");
+
+            this.extraTr.replaceWith(extraTrToInject);
+            this.extraTr = extraTrToInject;
+
+            this.extraTrState = this.OUTDATED_VALUES;
+            return
+        };
+
+        if (this.extraTrState == this.ATTENDANCE_SHOWN) {
             return;
         }
-        attendanceDisplayed.textContent = "";
-        attendanceDisplayed.insertCell();
-        const attendanceDisplayTd = attendanceDisplayed.insertCell();
+        const extraTrToInject = document.createElement("tr");
+        const totalDescTd = extraTrToInject.insertCell();
+        const totalTd = extraTrToInject.insertCell();
 
-        attendanceDisplayTd.appendChild(document.createTextNode(`Attendance before claims: ${attendanceBeforeClaims}%\n`));
-        attendanceDisplayTd.appendChild(document.createTextNode(`Attendance after claims:  ${attendanceAfterClaims}%\n`));
-        attendanceDisplayTd.appendChild(document.createTextNode(`Last updated: ${lastUpdated}\n`));
-        attendanceDisplayTd.appendChild(document.createTextNode("Go "));
-        attendanceDisplayTd.appendChild(absencePageLink);
-        attendanceDisplayTd.appendChild(document.createTextNode(" to update absence values."));
+        const totalDesc = `Attendance Percentage with${this.includesClaims ? "out" : ""} Claims`;
+        const total = this.includesClaims ? attendanceBeforeClaims : attendanceAfterClaims;
+
+        totalDescTd.appendChild(document.createTextNode(totalDesc));
+        totalTd.appendChild(document.createTextNode(total));
+
         
-        attendanceDisplayed.classList.add("attendance");
-        attendanceDisplayed.classList.remove("fetch-fail");
-        observer.disconnect();
-    } catch(error) {
-        console.error("Attendance Eshtu? failed to fetch values:", error);
-        if (attendanceDisplayed.classList.contains("fetch-fail")) {
-            return;
+        Object.assign(extraTrToInject.style, {
+            fontWeight: "700",
+            textAlign: "right"
+        });
+        totalDescTd.colSpan = "2";
+
+        this.extraTr.replaceWith(extraTrToInject);
+        this.extraTr = extraTrToInject;
+        
+        this.extraTrState = this.ATTENDANCE_SHOWN;
+
+        Main.observer.disconnect();
+    }
+
+    static {
+        this.AYTitle.appendChild(document.createTextNode(this.TITLE));
+        Object.assign(this.AYTitle.style, {
+            backgroundColor: "#003399",
+            color: "rgb(240, 240, 240)",
+            padding: "3px",
+            borderRadius: "5px"
+        });
+
+        this.absencePageA.appendChild(document.createTextNode("here"));
+        this.absencePageA.href = this.ABSENCE_PAGE_URL;
+        this.absencePageA.style.textDecoration = "underline";
+    }
+
+    static async main() {
+        try {
+            this.fetchedValues = await browserAPI.storage.local.get(["absenceBeforeClaims", "absenceAfterClaims", "lastUpdated"]);
+            this.absenceBeforeClaims = this.fetchedValues.absenceBeforeClaims;
+            this.absenceAfterClaims = this.fetchedValues.absenceAfterClaims;
+            this.lastUpdated = (new Date(this.fetchedValues.lastUpdated)).toLocaleDateString("en-IN", {
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        } catch (error) {
+            console.error(`${this.TITLE} failed to fetch values:`, error);
         }
-        attendanceDisplayed.textContent = "";
-        attendanceDisplayed.insertCell();
-        const attendanceDisplayTd = attendanceDisplayed.insertCell();
 
-        attendanceDisplayTd.appendChild(document.createTextNode("Attendance Eshtu? failed to fetch values.\n"));
-        attendanceDisplayTd.appendChild(document.createTextNode("Go "));
-        attendanceDisplayTd.appendChild(absencePageLink);
-        attendanceDisplayTd.appendChild(document.createTextNode(" to update absence values."));
+        this.doStuff();
 
-        attendanceDisplayed.classList.add("fetch-fail");
-        attendanceDisplayed.classList.remove("attendance");
+        this.observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
     }
 }
 
-var observer = new MutationObserver((mutations) => {
-    doStuff();
-});
-
-doStuff();
-
-observer.observe(document.body, {
-    childList: true,
-    subtree: true
-});
+Main.main();
