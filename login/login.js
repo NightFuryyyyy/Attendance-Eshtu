@@ -85,7 +85,9 @@ class Main {
                             width: this.captchaImg.width * (this.divisions[i] - this.divisions[i - 1]) * 2,
                             height: this.captchaImg.height * 2,
                         });
-                        const divisionCtx = divisionCanvas.getContext("2d");
+                        const divisionCtx = divisionCanvas.getContext("2d", {
+                            willReadFrequently: true,
+                        });
                         divisionCtx.imageSmoothingEnabled = false;
                         divisionCtx.drawImage(
                             this.captchaImg,
