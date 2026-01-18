@@ -1,0 +1,37 @@
+#Login {
+    padding: 0 20px !important;
+    width: fit-content;
+}
+
+tr:has(#Login) {
+    display: flex;
+}
+
+td:has(> #fillButton) {
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+#fillButton {
+    background: #ff6600;
+    padding: 0 20px;
+    width: fit-content;
+    font-weight: 700;
+    height: 50px;
+    font-size: 16px;
+    color: #ffffff;
+    transition: opacity .3s;
+}
+
+#fillButton:hover {
+    opacity: 0.6;
+}
+
+#captchaImageDiv {
+	height: unset !important;
+    margin-bottom: 0px;
+}
+
+#gravityCaptcha {
+    height: 30px;
+}
