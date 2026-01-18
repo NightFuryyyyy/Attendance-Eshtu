@@ -1,8 +1,15 @@
 {
     "manifest_version": 3,
     "name": "Attendance Eshtu?",
-    "version": "1.2",
+    "version": "2.0",
     "description": "Always show attendance with and without claims on KnowledgePro.",
+
+	"icons": {
+		"16": "images/icon.png",
+		"32": "images/icon.png",
+		"64": "images/icon.png",
+		"128": "images/icon.png"
+	},
 
 	"browser_specific_settings": {
 		"gecko": {
@@ -11,6 +18,10 @@
 				"required": [ "none" ]
 			}
 		}
+	},
+
+	"action": {
+		"default_popup": "popup/popup.html"
 	},
     
     "content_scripts": [
@@ -25,6 +36,18 @@
 		}, {
 			"matches": ["*://kp.christuniversity.in/KnowledgePro/*"],
 			"css": ["fixes.css"]
+		}, {
+			"matches": [
+				"*://kp.christuniversity.in/KnowledgePro/StudentLogin.do*",
+				"*://kp.christuniversity.in/KnowledgePro/StudentLoginNewAction.do*",
+				"*://kp.christuniversity.in/KnowledgePro/StudentLoginAction.do?method=studentLogoutAction*"
+			],
+			"js": [
+				"login/login.js",
+				"lib/tesseract.min.js"
+			],
+			"css": ["login/login.css"],
+			"run_at": "document_end"
 		}
     ],
     
