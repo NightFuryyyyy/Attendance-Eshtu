@@ -21,9 +21,9 @@ class Main {
     static fetchedValues = null;
     static absenceBeforeClaims = null;
     static absenceAfterClaims = null;
-    static lastUpdated = null;
 
     static TITLE = "Attendance Eshtu?";
+    static TITLE_SHORT = "AE?";
 
     static extraTrState = null;
     static ATTENDANCE_SHOWN = 0;
@@ -45,7 +45,7 @@ class Main {
         return messageTr;
     }
 
-    static doStuff() {
+    static async doStuff() {
         if (!this.extraTr) {
             this.table = document.querySelector("table table table");
             this.totalConductedDiv = this.table.querySelector("tr:has(td[colspan='2'])>td:last-child td:nth-child(2) div");
@@ -56,17 +56,16 @@ class Main {
             this.totalConducted = parseFloat(this.totalConductedDiv.textContent);
             this.existingTotal = parseFloat(this.existingTotalTr.querySelector("td:nth-child(2)").textContent);
             this.includesClaims = this.existingTotalDescTd.textContent.includes("(With Co-curricular Leave)");
-            const newTotalDesc = `Attendance Percentage with${this.includesClaims ? "" : "out"} Claims`;
+            const newTotalDesc = `Attendance with${this.includesClaims ? "" : "out"} claims`;
 
-            this.existingTotalDescTd.textContent = "";
-            this.existingTotalDescTd.appendChild(document.createTextNode(newTotalDesc));
+            this.existingTotalDescTd.replaceChildren(document.createTextNode(newTotalDesc));
             Object.assign(this.existingTotalDescTd.style, {
                 fontWeight: "700",
                 textAlign: "right"
             });
         }
 
-        if (!this.absenceBeforeClaims || !this.absenceAfterClaims || !this.lastUpdated) {
+        if (!this.absenceBeforeClaims || !this.absenceAfterClaims) {
             if (this.extraTrState == this.FETCH_FAIL) {
                 return;
             }
@@ -106,13 +105,13 @@ class Main {
         const totalDescTd = extraTrToInject.insertCell();
         const totalTd = extraTrToInject.insertCell();
 
-        const totalDesc = `Attendance Percentage with${this.includesClaims ? "out" : ""} Claims`;
+        const totalDesc = `Attendance with${this.includesClaims ? "out" : ""} claims`;
         const total = this.includesClaims ? attendanceBeforeClaims : attendanceAfterClaims;
+        const lastUpdated = (new Date()).toISOString();
 
         totalDescTd.appendChild(document.createTextNode(totalDesc));
         totalTd.appendChild(document.createTextNode(total));
 
-        
         Object.assign(extraTrToInject.style, {
             fontWeight: "700",
             textAlign: "right"
@@ -124,16 +123,27 @@ class Main {
         
         this.extraTrState = this.ATTENDANCE_SHOWN;
 
+        try {
+            await browserAPI.storage.local.set({
+                lastUpdated,
+                attendanceBeforeClaims,
+                attendanceAfterClaims,
+            });
+        } catch (error) {
+            console.error("Failed to save:", error);
+        }
+
         Main.observer.disconnect();
     }
 
     static {
-        this.AYTitle.appendChild(document.createTextNode(this.TITLE));
+        this.AYTitle.appendChild(document.createTextNode(this.TITLE_SHORT));
         Object.assign(this.AYTitle.style, {
             backgroundColor: "#003399",
             color: "rgb(240, 240, 240)",
             padding: "3px",
-            borderRadius: "5px"
+            borderRadius: "5px",
+            fontWeight: "bold",
         });
 
         this.absencePageA.appendChild(document.createTextNode("here"));
@@ -143,16 +153,9 @@ class Main {
 
     static async main() {
         try {
-            this.fetchedValues = await browserAPI.storage.local.get(["absenceBeforeClaims", "absenceAfterClaims", "lastUpdated"]);
+            this.fetchedValues = await browserAPI.storage.local.get(["absenceBeforeClaims", "absenceAfterClaims"]);
             this.absenceBeforeClaims = this.fetchedValues.absenceBeforeClaims;
             this.absenceAfterClaims = this.fetchedValues.absenceAfterClaims;
-            this.lastUpdated = (new Date(this.fetchedValues.lastUpdated)).toLocaleDateString("en-IN", {
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
         } catch (error) {
             console.error(`${this.TITLE} failed to fetch values:`, error);
         }
