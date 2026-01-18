@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="./style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <h1>Attendance Eshtu?</h1>
+        <div id="attendanceDiv" class="section">
+            <span class="sectionTitle">Attendance</span>
+            <div id="fetchFailDiv">
+                Values are not saved.<br>
+                Go to the <a href="https://kp.christuniversity.in/KnowledgePro/studentWiseAttendanceSummary.do?method=getIndividualStudentWiseSubjectAndActivityAttendanceSummary">attendance page</a>
+                to save values.
+            </div>
+            <div id="attendanceInnerDiv">
+                <table>
+                    <tr>
+                        <th>Attendance<br>without claims</th>
+                        <td><span id="attendanceWithoutClaims"></span>%</td>
+                    </tr>
+                    <tr>
+                        <th>Attendance<br>with claims</th>
+                        <td><span id="attendanceWithClaims"></span>%</td>
+                    </tr>
+                    <tr>
+                        <th>Last updated</th>
+                        <td>
+                            <span id="lastUpdatedDate"></span>,<br>
+                            <span id="lastUpdatedTime"></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <br>
+        <div id="autofillDiv" class="section">
+            <span class="sectionTitle">Autofill</span>
+            <div>
+                <label>
+                    <input type="checkbox" id="showFill">
+                    Show fill button
+                </label>
+                <br>
+                <div id="loginCredentialsDiv">
+                    <label>Reg. No.</label><br>
+                    <input type="text" id="regNoInput">
+                    <br>
+                    <label>Password</label><br>
+                    <input type="password" id="passwordInput">
+                    <br>
+                    <input type="button" value="Save" id="saveLoginCredentials">
+                    <label>
+                        <input type="checkbox" id="solveCaptchaCheckbox">
+                        Solve captcha (unreliable)
+                    </label>
+                </div>
+            </div>
+        </div>
+        <script src="./script.js"></script>
+    </body>
+</html>

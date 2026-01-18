@@ -1,0 +1,96 @@
+body {
+    width: 240px;
+    height: 320px;
+    color: rgb(0, 51, 153);
+    font-size: 14px;
+    font-family: "calibri", Garamond, "Comic Sans";
+}
+
+.section {
+    background: #f7f7f7;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+#loginCredentialsDiv {
+    display: none;
+    width: fit-content;
+    margin-left: 20px;
+}
+
+div:has(#showFill:checked) #loginCredentialsDiv {
+    display: block;
+}
+
+#saveLoginCredentials {
+    display: block;
+    color: #ffffff;
+    background-color: rgb(66, 139, 202);
+    border-radius: 3px;
+    padding: 4px 8px;
+    cursor: pointer;
+    border: none;
+    font-size: inherit;
+    font-family: inherit;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+#saveLoginCredentials:hover {
+    background-color: rgb(48, 113, 169);
+}
+
+.sectionTitle {
+    font-size: 17px;
+    font-weight: bold;
+    background: linear-gradient(#bbe1f2, #7abcd6);
+    display: block;
+    margin: -5px -5px 0px -5px;
+    padding: 2.5px 5px;
+    border-radius: 4px 4px 0px 0px;
+}
+
+#attendanceDiv #attendanceInnerDiv {
+    display: none;
+    border-radius: 4px;
+}
+
+#attendanceDiv.attendance #attendanceInnerDiv {
+    display: unset;
+}
+
+#attendanceDiv.attendance #fetchFailDiv {
+    display: none;
+}
+
+#attendanceInnerDiv table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 3px;
+}
+
+#attendanceInnerDiv th, #attendanceInnerDiv td {
+    border: 1px solid #dddddd;
+    padding: 2px;
+}
+
+#attendanceInnerDiv th {
+    text-align: right;
+}
+
+#attendanceInnerDiv tr:nth-child(odd) {
+    background-color: #f0f0f0;
+}
+
+#attendanceInnerDiv tr:nth-child(even) {
+    background-color: #f7f7f7;
+}
+
+h1 {
+    width: fit-content;
+    font-size: 20px;
+    background-color: rgb(0, 51, 153);
+    color: rgb(240, 240, 240);
+    padding: 3px;
+    border-radius: 5px;
+}
