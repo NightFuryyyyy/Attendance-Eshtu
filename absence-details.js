@@ -11,16 +11,18 @@ async function saveAbsence() {
         return;
     }
     const absenceAfterClaims = absenceBeforeClaims - claims;
-    const lastUpdated = (new Date()).toISOString();
     try {
         await browserAPI.storage.local.set({
             absenceBeforeClaims,
             absenceAfterClaims,
-            lastUpdated
         });
         for (i = 0; i < 2; i++) {
-            elements[i].style.background = "green";
-            elements[i].style.color = "white";
+            Object.assign(elements[i].style, {
+                backgroundColor: "#003399",
+                color: "rgb(240, 240, 240)",
+                padding: "3px",
+                borderRadius: "5px"
+            });
         }
         observer.disconnect();
     } catch (error) {
