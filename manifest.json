@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Attendance Eshtu?",
-    "version": "2.0",
+    "version": "2.0.0.1",
     "description": "Always show attendance with and without claims on KnowledgePro.",
 
 	"icons": {
