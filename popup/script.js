@@ -11,6 +11,8 @@ const regNoInput = document.getElementById("regNoInput");
 const passwordInput = document.getElementById("passwordInput");
 const saveLoginCredentials = document.getElementById("saveLoginCredentials");
 const solveCaptchaCheckbox = document.getElementById("solveCaptchaCheckbox");
+const savedMessage = document.getElementById("savedMessage");
+const clearButton = document.getElementById("clearButton");
 
 class MyDate {
     #date;
@@ -103,7 +105,16 @@ saveLoginCredentials.addEventListener("click", async event => {
             regNo,
             password,
         });
+        savedMessage.classList.add("saved");
+        setTimeout(() => {
+            savedMessage.classList.remove("saved");
+        }, 1000);
     } catch (error) {
         console.error("Failed to save:", error);
     }
+});
+
+clearButton.addEventListener("click", () => {
+    regNoInput.value = "";
+    passwordInput.value = "";
 });

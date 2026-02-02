@@ -22,22 +22,48 @@ div:has(#showFill:checked) #loginCredentialsDiv {
     display: block;
 }
 
-#saveLoginCredentials {
-    display: block;
-    color: #ffffff;
+#buttonsDiv {
+    display: flex;
+    gap: 3px;
+    margin-top: 3px;
+    width: 100%;
+    align-items: center;
+}
+
+.button {
+    display: flex; 
+    width: fit-content;
     background-color: rgb(66, 139, 202);
+    color: #ffffff;
+    fill: #ffffff; 
     border-radius: 3px;
     padding: 4px 8px;
     cursor: pointer;
-    border: none;
-    font-size: inherit;
-    font-family: inherit;
     font-weight: 600;
-    margin-top: 2px;
 }
 
-#saveLoginCredentials:hover {
+.button:hover {
     background-color: rgb(48, 113, 169);
+}
+
+#savedMessage {
+    color: #008800;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+#savedMessage.saved {
+    opacity: 1;
+    transition: none;
+}
+
+#clearButton {
+    display: none;
+}
+
+#loginCredentialsDiv:has(#regNoInput:not(:placeholder-shown)) #clearButton,
+#loginCredentialsDiv:has(#passwordInput:not(:placeholder-shown)) #clearButton {
+    display: flex;
 }
 
 .sectionTitle {
