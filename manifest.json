@@ -26,6 +26,12 @@
     
     "content_scripts": [
 		{
+			"matches": ["http://192.168.100.100:8090/*"],
+			"js": ["captivePortal/captivePortal.js"],
+			"css": ["captivePortal/captivePortal.css"],
+			"run_at": "document_end"
+		},
+		{
 			"matches": ["*://kp.christuniversity.in/KnowledgePro/studentWiseAttendanceSummary.do?method=getStudentAbscentWithCocularLeave"],
 			"js": ["absence-details.js"],
 			"run_at": "document_end"
