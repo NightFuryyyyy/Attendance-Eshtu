@@ -1,0 +1,32 @@
+#fillButton {
+    font-size: 12.8px;
+    background-color: #0B3F64;
+    color: #ffffff;
+    padding: .7em 1em;
+    border-radius: .3em;
+    font-weight: bold;
+    height: fit-content;
+    width: 80%;
+    cursor: pointer;
+}
+
+#fillButton:hover {
+    background-color: #337ab7;
+}
+
+.buttonrow:has(#loginbutton) {
+    display: flex;
+    gap: 10px;
+}
+
+#loginbutton {
+    width: unset;
+}
+
+a:has(>#loginbutton) {
+    width: 100%;
+}
+
+.panel-body:has(#credentials.loggedin) #fillButton {
+    display: none;
+}
