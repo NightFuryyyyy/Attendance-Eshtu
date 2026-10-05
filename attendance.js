@@ -1,172 +1,178 @@
 const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
 
-class Main {
-    static observer = new MutationObserver((mutations) => {
-        this.doStuff();
-    });
-    static includesClaims = null;
-    
-    static table = null;
-    static existingTotalTr = null;
-    static existingTotalDescTd = null;
-    static totalConductedDiv = null;
-    static extraTr = null;
-    static AYTitle = document.createElement("span");
-    static absencePageA = document.createElement("a");
-    
-    static ABSENCE_PAGE_URL = "https://kp.christuniversity.in/KnowledgePro/studentWiseAttendanceSummary.do?method=getStudentAbscentWithCocularLeave";
-    
-    static existingTotal = null;
-    static totalConducted = null;
-    static fetchedValues = null;
-    static absenceBeforeClaims = null;
-    static absenceAfterClaims = null;
+document.querySelector("button.MuiToggleButtonGroup-grouped:nth-child(2)").classList.add("click-me");
 
-    static TITLE = "Attendance Eshtu?";
-    static TITLE_SHORT = "AE?";
+const observer = new MutationObserver((mutations) => {
+    main();
+});
 
-    static extraTrState = null;
-    static ATTENDANCE_SHOWN = 0;
-    static FETCH_FAIL = 1;
-    static OUTDATED_VALUES = 2;
+function createWithCocurricularPill() {
+    const withCocurricularPill = document.createElement("span");
+    withCocurricularPill.textContent = "With Co-curricular";
+    withCocurricularPill.style.cssText = "font-size: 0.65rem; color: rgb(245, 158, 11); font-weight: 700; background-color: rgba(245, 158, 11, 0.125); padding: 3.5px 8px; border-radius: 16px;";
+    return withCocurricularPill;
+}
 
-    static MessageTR(message) {
-        const messageTr = document.createElement("tr");
-        const messageTd = messageTr.insertCell();
+async function main() {
+    observer.disconnect();
 
-        messageTd.appendChild(this.AYTitle);
-        messageTd.appendChild(document.createTextNode(` ${message} Go `));
-        messageTd.appendChild(this.absencePageA);
-        messageTd.appendChild(document.createTextNode(" to update absence values."));
+    const first_cell = document.querySelector("tr.css-1i3xmw4:nth-child(1) > th:nth-child(1)");
 
-        messageTd.colSpan = "3";
-        messageTd.style.textAlign = "center";
-
-        return messageTr;
-    }
-
-    static async doStuff() {
-        if (!this.extraTr) {
-            this.table = document.querySelector("table table table");
-            this.totalConductedDiv = this.table.querySelector("tr:has(td[colspan='2'])>td:last-child td:nth-child(2) div");
-            this.existingTotalTr = this.table.querySelector("tr:has(td[colspan='2']):last-child");
-            this.existingTotalDescTd = this.existingTotalTr.querySelector("td");
-            this.extraTr = this.table.insertRow();
-            
-            this.totalConducted = parseFloat(this.totalConductedDiv.textContent);
-            this.existingTotal = parseFloat(this.existingTotalTr.querySelector("td:nth-child(2)").textContent);
-            this.includesClaims = this.existingTotalDescTd.textContent.includes("(With Co-curricular Leave)");
-            const newTotalDesc = `Attendance with${this.includesClaims ? "" : "out"} claims`;
-
-            this.existingTotalDescTd.replaceChildren(document.createTextNode(newTotalDesc));
-            Object.assign(this.existingTotalDescTd.style, {
-                fontWeight: "700",
-                textAlign: "right"
-            });
-        }
-
-        if (!this.absenceBeforeClaims || !this.absenceAfterClaims) {
-            if (this.extraTrState == this.FETCH_FAIL) {
-                return;
-            }
-            
-            const extraTrToInject = this.MessageTR("Failed to fetch values.");
-
-            this.extraTr.replaceWith(extraTrToInject);
-            this.extraTr = extraTrToInject;
-
-            this.extraTrState = this.FETCH_FAIL;
-            return;
-        }
-
-        var attendanceBeforeClaims = (this.totalConducted - this.absenceBeforeClaims) * 100 / this.totalConducted;
-        attendanceBeforeClaims = Math.round(attendanceBeforeClaims * 100) / 100;
-        var attendanceAfterClaims = (this.totalConducted - this.absenceAfterClaims) * 100 / this.totalConducted;
-        attendanceAfterClaims = Math.round(attendanceAfterClaims * 100) / 100;
-
-        if ((this.includesClaims && this.existingTotal != attendanceAfterClaims) || (!this.includesClaims && this.existingTotal != attendanceBeforeClaims)) {
-            if (this.extraTrState == this.OUTDATED_VALUES) {
-                return;
-            }
-
-            const extraTrToInject = this.MessageTR("Values are outdated.");
-
-            this.extraTr.replaceWith(extraTrToInject);
-            this.extraTr = extraTrToInject;
-
-            this.extraTrState = this.OUTDATED_VALUES;
-            return
-        };
-
-        if (this.extraTrState == this.ATTENDANCE_SHOWN) {
-            return;
-        }
-        const extraTrToInject = document.createElement("tr");
-        const totalDescTd = extraTrToInject.insertCell();
-        const totalTd = extraTrToInject.insertCell();
-
-        const totalDesc = `Attendance with${this.includesClaims ? "out" : ""} claims`;
-        const total = this.includesClaims ? attendanceBeforeClaims : attendanceAfterClaims;
-        const lastUpdated = (new Date()).toISOString();
-
-        totalDescTd.appendChild(document.createTextNode(totalDesc));
-        totalTd.appendChild(document.createTextNode(total));
-
-        Object.assign(extraTrToInject.style, {
-            fontWeight: "700",
-            textAlign: "right"
-        });
-        totalDescTd.colSpan = "2";
-
-        this.extraTr.replaceWith(extraTrToInject);
-        this.extraTr = extraTrToInject;
-        
-        this.extraTrState = this.ATTENDANCE_SHOWN;
-
-        try {
-            await browserAPI.storage.local.set({
-                lastUpdated,
-                attendanceBeforeClaims,
-                attendanceAfterClaims,
-            });
-        } catch (error) {
-            console.error("Failed to save:", error);
-        }
-
-        Main.observer.disconnect();
-    }
-
-    static {
-        this.AYTitle.appendChild(document.createTextNode(this.TITLE_SHORT));
-        Object.assign(this.AYTitle.style, {
-            backgroundColor: "#003399",
-            color: "rgb(240, 240, 240)",
-            padding: "3px",
-            borderRadius: "5px",
-            fontWeight: "bold",
-        });
-
-        this.absencePageA.appendChild(document.createTextNode("here"));
-        this.absencePageA.href = this.ABSENCE_PAGE_URL;
-        this.absencePageA.style.textDecoration = "underline";
-    }
-
-    static async main() {
-        try {
-            this.fetchedValues = await browserAPI.storage.local.get(["absenceBeforeClaims", "absenceAfterClaims"]);
-            this.absenceBeforeClaims = this.fetchedValues.absenceBeforeClaims;
-            this.absenceAfterClaims = this.fetchedValues.absenceAfterClaims;
-        } catch (error) {
-            console.error(`${this.TITLE} failed to fetch values:`, error);
-        }
-
-        this.doStuff();
-
-        this.observer.observe(document.body, {
+    if (!first_cell || document.getElementById("extraPercentageHeader")) {
+        observer.observe(document.body, {
             childList: true,
             subtree: true
         });
+        return;
     }
+    const isCocurricular = !!first_cell.querySelector("div:nth-child(4) > span:nth-child(1)");
+
+    const percentage_header = document.querySelector("th.MuiTableCell-root:nth-child(5)");
+    const new_percentage_header = percentage_header.cloneNode();
+    new_percentage_header.id = "extraPercentageHeader";
+
+    percentage_header.textContent = "Percentage (without claims)";
+    new_percentage_header.textContent = "Percentage (with claims)";
+    percentage_header.after(new_percentage_header);
+
+    let overall_conducted, overall_presence, overall_claims;
+    overall_conducted = overall_presence = overall_claims = 0;
+
+    const rows = document.querySelectorAll("tr.css-1i3xmw4");
+    rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        const percentage_cell = cells[3];
+        const new_percentage_cell = percentage_cell.cloneNode();
+        if (percentage_cell.textContent.trim() == "-") {
+            new_percentage_cell.textContent = "-";
+            percentage_cell.after(new_percentage_cell);
+            return;
+        }
+        let [ presence, conducted ] = cells[0].textContent.split("/").map(val => parseInt(val));
+        const claims = parseInt(cells[2].textContent);
+        if (isCocurricular) {
+            presence -= claims;
+            const attendanceWithoutClaims = Math.round((presence / conducted) * 10000) / 100;
+            new_percentage_cell.textContent = `${attendanceWithoutClaims}%`;
+            percentage_cell.before(new_percentage_cell);
+        } else {
+            const attendanceWithClaims = Math.round(((presence + claims) / conducted) * 10000) / 100;
+            new_percentage_cell.textContent = `${attendanceWithClaims}%`;
+            percentage_cell.after(new_percentage_cell);
+        }
+        overall_conducted += conducted;
+        overall_presence += presence;
+        overall_claims += claims;
+    });
+
+    if (document.getElementById("newMobileOverallAttDiv")) {
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        return;
+    }
+
+    const overallAttendanceWidget = document.querySelector("div.MuiGrid-grid-sm-6:nth-child(1)");
+    const newOverallAttendanceWidget = overallAttendanceWidget.cloneNode(true);
+    const newOverallAttWidgetInternalDiv = newOverallAttendanceWidget.querySelector("div.MuiCardContent-root");
+    const newOverallPercH4 = newOverallAttendanceWidget.querySelector("h4.MuiTypography-root");
+    const newOverallFractionPara = newOverallAttendanceWidget.querySelector("p.MuiTypography-body2");
+    const newProgressFill = newOverallAttendanceWidget.querySelector("span.MuiLinearProgress-bar");
+    newProgressFill.style.backgroundColor = "rgb(142, 184, 255)";
+    
+    const overallAttendanceWithoutClaims = Math.round((overall_presence / overall_conducted) * 10000) / 100;
+    const overallAttendanceWithClaims = Math.round(((overall_presence + overall_claims) / overall_conducted) * 10000) / 100;
+
+    await browserAPI.storage.local.set({
+        attendanceBeforeClaims: overallAttendanceWithoutClaims,
+        attendanceAfterClaims: overallAttendanceWithClaims,
+        lastUpdated: new Date().toISOString(),
+    });
+
+    if (isCocurricular) {
+        newOverallAttendanceWidget.querySelector("div.MuiBox-root")?.remove();
+        newOverallPercH4.textContent = `${overallAttendanceWithoutClaims}%`;
+        newOverallFractionPara.textContent = `${overall_presence} / ${overall_conducted} hrs`;
+        newProgressFill.style.transform = `translateX(${overallAttendanceWithoutClaims - 100}%)`;
+        overallAttendanceWidget.before(newOverallAttendanceWidget);
+    } else {
+        const withCocurricularPill = createWithCocurricularPill();
+        Object.assign(withCocurricularPill.style, {
+            marginLeft: "auto",
+            display: "flex",
+            width: "fit-content",
+        });
+        newOverallAttWidgetInternalDiv.prepend(withCocurricularPill);
+        newOverallPercH4.textContent = `${overallAttendanceWithClaims}%`;
+        newOverallFractionPara.textContent = `${overall_presence + overall_claims} / ${overall_conducted} hrs`;
+        newProgressFill.style.transform = `translateX(${overallAttendanceWithClaims - 100}%)`;
+        overallAttendanceWidget.after(newOverallAttendanceWidget);
+    }
+
+    const mobileOverallAttendanceWidget = document.querySelector(".css-1ohlybh");
+    const headerAndPerc = mobileOverallAttendanceWidget.querySelector("div.MuiBox-root.css-6fjwu3");
+    const mobileOverallAttHeader = headerAndPerc.querySelector("p.MuiTypography-root");
+    const progressBar = mobileOverallAttendanceWidget.querySelector("span.MuiLinearProgress-root");
+    const mobileOverallFractDiv = mobileOverallAttendanceWidget.querySelector("div.css-1w71xjo");
+
+    const newMobileOverallAttDiv = document.createElement("div");
+    newMobileOverallAttDiv.id = "newMobileOverallAttDiv";
+    newMobileOverallAttDiv.style.marginBottom = "10px";
+    const newHeaderAndPerc = newMobileOverallAttDiv.appendChild(headerAndPerc.cloneNode(true));
+    const newProgressBar = newMobileOverallAttDiv.appendChild(progressBar.cloneNode(true));
+    const newMobileOverallFractDiv = newMobileOverallAttDiv.appendChild(mobileOverallFractDiv.cloneNode(true));
+    
+    const newMobileOverallAttHeader = newHeaderAndPerc.querySelector("p.MuiTypography-root");
+    const newMobileOverallPerc = newHeaderAndPerc.querySelector("h6.MuiTypography-root");
+    const newMobileProgressFill = newProgressBar.querySelector("span.MuiLinearProgress-bar");
+    const newOverallFractPara = newMobileOverallFractDiv.querySelector("p.MuiTypography-root");
+
+    newMobileProgressFill.style.backgroundColor = "rgb(142, 184, 255)";
+    
+    if (isCocurricular) {
+        mobileOverallAttHeader.appendChild(createWithCocurricularPill()).style.marginLeft = "10px";
+        newMobileOverallPerc.textContent = `${overallAttendanceWithoutClaims}%`;
+        newMobileProgressFill.style.transform = `translateX(${overallAttendanceWithoutClaims - 100}%)`;
+        newOverallFractPara.textContent = `${overall_presence} / ${overall_conducted} hrs attended`;
+        headerAndPerc.before(newMobileOverallAttDiv);
+    } else {
+        newMobileOverallAttHeader.appendChild(createWithCocurricularPill()).style.marginLeft = "10px";;
+        newMobileOverallPerc.textContent = `${overallAttendanceWithClaims}%`;
+        newMobileProgressFill.style.transform = `translateX(${overallAttendanceWithClaims - 100}%)`;
+        newOverallFractPara.textContent = `${overall_presence + overall_claims} / ${overall_conducted} hrs attended`;
+        mobileOverallFractDiv.after(newMobileOverallAttDiv);
+    }
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 }
 
-Main.main();
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
+});
+main();
+
+const style = document.createElement("style");
+style.textContent = `
+    .click-me[aria-pressed="false"]  {
+    animation: pulse-rotate 1.5s ease infinite;
+    }
+
+    @keyframes pulse-rotate {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+        background-color: rgb(244, 63, 94);
+    }
+    100% {
+        transform: scale(1);
+    }
+    }
+`;
+document.head.appendChild(style);

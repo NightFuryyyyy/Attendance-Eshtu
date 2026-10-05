@@ -68,7 +68,7 @@ class Main {
             cell.removeAttribute("width");
         });
 
-        this.fillButton.addEventListener("click", event => {
+        this.fillButton.addEventListener("click", () => {
             if (!this.captchaLoadListenerAdded) {
                 this.captchaImg.addEventListener("load", async () => {
                     Object.assign(this.gravityCanvas, {
@@ -179,4 +179,6 @@ class Main {
     }
 }
 
-Main.main();
+if (document.title.includes("Login")) {
+    Main.main();
+}

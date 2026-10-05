@@ -23,41 +23,45 @@
 	"action": {
 		"default_popup": "popup/popup.html"
 	},
+
+	"background": {
+		"scripts": [ "background.js" ],
+		"service_worker": "background.js"
+	},
+
     
     "content_scripts": [
 		{
-			"matches": ["http://192.168.100.100:8090/*"],
+			"matches": ["https://sophoscucentral.christuniversity.in/httpclient.html"],
 			"js": ["captivePortal/captivePortal.js"],
 			"css": ["captivePortal/captivePortal.css"],
 			"run_at": "document_end"
-		},
-		{
-			"matches": ["*://kp.christuniversity.in/KnowledgePro/studentWiseAttendanceSummary.do?method=getStudentAbscentWithCocularLeave"],
-			"js": ["absence-details.js"],
-			"run_at": "document_end"
 		}, {
-			"matches": ["*://kp.christuniversity.in/KnowledgePro/studentWiseAttendanceSummary.do?method=getIndividualStudentWiseSubjectAndActivityAttendanceSummary"],
-			"js": ["attendance.js"],
-			"run_at": "document_end"
-		}, {
-			"matches": ["*://kp.christuniversity.in/KnowledgePro/*"],
-			"css": ["fixes.css"]
-		}, {
-			"matches": [
-				"*://kp.christuniversity.in/KnowledgePro/StudentLogin.do*",
-				"*://kp.christuniversity.in/KnowledgePro/StudentLoginNewAction.do*",
-				"*://kp.christuniversity.in/KnowledgePro/StudentLoginAction.do?method=studentLogoutAction*"
-			],
+			"matches": [ "https://kp.christuniversity.in/KnowledgePro/*" ],
 			"js": [
 				"login/login.js",
 				"lib/tesseract.min.js"
 			],
-			"css": ["login/login.css"],
+			"css": [
+				"login/login.css",
+				"fixes.css"
+			],
+			"run_at": "document_end"
+		}, {
+			"matches": [ "https://studentespro.christuniversity.in/auth/*" ],
+			"js": [ "espro_login/espro_login.js" ],
+			"css": [ "espro_login/espro_login.css" ],
 			"run_at": "document_end"
 		}
     ],
+
+	"host_permissions": [
+		"https://cue.christuniversity.in/main/*"
+	],
     
     "permissions": [
-      	"storage"
+      	"storage",
+		"webNavigation",
+		"scripting"
     ]
 }

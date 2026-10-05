@@ -1,0 +1,28 @@
+#fillButton {
+	font-size: 16px;
+	background-color: #0066cc;
+	color: #ffffff;
+	border-radius: .3em;
+	height: 36px;
+	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+    flex: 1;
+}
+
+#fillButton:hover {
+	background-color: #004080;
+}
+
+div:has(> #kc-login) {
+    display: flex;
+    flex-direction: row;
+}
+
+#kc-login {
+    width: unset;
+    height: 36px;
+    padding: 0;
+    flex: 1;
+}
