@@ -65,3 +65,12 @@ A multi-purpose browser extension for Christ University students.
 ### Firefox
 
 Install Attendance Eshtu? from [Firefox Addons](https://addons.mozilla.org/en-GB/firefox/addon/attendance-eshtu/).
+
+### Chrome
+
+Step 1. Download the latest release.
+Step 2. Unzip and save it somewhere safe.
+Step 3. Open [chrome://extensions](chrome://extensions) on Chrome.
+Step 4. Turn on Developer Mode.
+Step 5. Click "Load unpacked".
+Step 6. Open the folder.
