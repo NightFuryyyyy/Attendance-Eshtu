@@ -55,7 +55,7 @@ A multi-purpose browser extension for Christ University students.
       <td align="center">
         <img src="https://raw.githubusercontent.com/NightFuryyyyy/Attendance-Eshtu/refs/heads/assets/popup.png">
       </td>
-      <td>Popup</td>
+      <td>Popup with saved values</td>
     </tr>
   </tbody>
 </table>
