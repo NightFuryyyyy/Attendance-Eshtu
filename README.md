@@ -41,7 +41,7 @@ A multi-purpose browser extension for Christ University students.
   <tbody>
     <tr>
       <td>
-        <img src="https://raw.githubusercontent.com/NightFuryyyyy/Attendance-Eshtu/refs/heads/assets/kp_login.gif">
+        <img src="https://raw.githubusercontent.com/NightFuryyyyy/Attendance-Eshtu/refs/heads/assets/espro_login.gif">
       </td>
       <td>Autofill for Knowledge Pro, ESPro and WiFi captive portal</td>
     </tr>
