@@ -59,3 +59,9 @@ A multi-purpose browser extension for Christ University students.
     </tr>
   </tbody>
 </table>
+
+## Install
+
+### Firefox
+
+Install Attendance Eshtu? from [Firefox Addons](https://addons.mozilla.org/en-GB/firefox/addon/attendance-eshtu/).
