@@ -7,7 +7,13 @@
 
 A multi-purpose browser extension for Christ University students.
 
-[Demo](#demo) • [Install](#install)
+[Key Features](#key-features) • [Demo](#demo) • [Install](#install)
+
+## Key Features
+
+- Calculates and displays overall and subject-wise attendance percentage with or without claims.
+- Autofill for ESPro, Knowledge Pro and WiFi captive portal.
+- Autofill captcha with Tesseract OCR.
 
 ## Demo
 
@@ -40,22 +46,17 @@ A multi-purpose browser extension for Christ University students.
 <table>
   <tbody>
     <tr>
-      <td>
-        <img src="https://raw.githubusercontent.com/NightFuryyyyy/Attendance-Eshtu/refs/heads/assets/espro_login.png">
+      <td align="center">
+        <img src="https://raw.githubusercontent.com/NightFuryyyyy/Attendance-Eshtu/refs/heads/assets/espro_login.png" width="345px">
+        <img src="https://raw.githubusercontent.com/NightFuryyyyy/Attendance-Eshtu/refs/heads/assets/kp_login.gif" width="345px">
       </td>
-      <td>Autofill for Knowledge Pro, ESPro and WiFi captive portal</td>
-    </tr>
-    <tr>
-      <td>
-        <img src="https://raw.githubusercontent.com/NightFuryyyyy/Attendance-Eshtu/refs/heads/assets/kp_login.gif">
-      </td>
-      <td>Autofill captcha with Tesseract OCR</td>
+      <td align="center">Autofill login credentials and captcha</td>
     </tr>
     <tr>
       <td align="center">
         <img src="https://raw.githubusercontent.com/NightFuryyyyy/Attendance-Eshtu/refs/heads/assets/popup.png">
       </td>
-      <td>Popup with saved values</td>
+      <td align="center">Popup with saved values</td>
     </tr>
   </tbody>
 </table>
@@ -68,9 +69,9 @@ Install Attendance Eshtu? from [Firefox Addons](https://addons.mozilla.org/en-GB
 
 ### Chrome
 
-Step 1. Download the latest release.
-Step 2. Unzip and save it somewhere safe.
-Step 3. Open [chrome://extensions](chrome://extensions) on Chrome.
-Step 4. Turn on Developer Mode.
-Step 5. Click "Load unpacked".
-Step 6. Open the folder.
+1. Click [this link](https://github.com/NightFuryyyyy/Attendance-Eshtu/releases/latest/download/Attendance-Eshtu.zip) to download the latest release.
+2. Unzip it and save the folder somewhere safe (removing the folder will remove the extension).
+3. Paste `chrome://extensions` into the address bar on Chrome and enter.
+4. Turn on the "Developer Mode" toggle in the top right corner.
+5. Click on the "Load unpacked" button in the top left.
+6. Navigate to the folder saved in step 2 and click on "Select Folder".
