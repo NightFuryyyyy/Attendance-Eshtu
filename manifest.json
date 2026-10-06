@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Attendance Eshtu?",
     "version": "3.0",
-    "description": "Always show attendance with and without claims on KnowledgePro.",
+    "description": "A multi-purpose browser extension for Christ University students",
 
 	"icons": {
 		"16": "images/icon.png",
