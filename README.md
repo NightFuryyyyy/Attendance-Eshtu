@@ -5,8 +5,6 @@
   Attendance Eshtu?
 </h1>
 
-A multi-purpose browser extension for Christ University students.
-
 [Key Features](#key-features) • [Demo](#demo) • [Install](#install)
 
 ## Key Features
